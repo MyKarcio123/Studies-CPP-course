@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="OpenGL\Shader.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Time.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="OpenGL\Shader.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Time.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Shaders\Vertex\DefaultVertex.vert" />
+    <None Include="Resources\Shaders\Fragment\DefaultFragment.frag" />
+  </ItemGroup>
+</Project>

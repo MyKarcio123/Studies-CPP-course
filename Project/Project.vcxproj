@@ -139,22 +139,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Blocks\Block.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Chunk.cpp" />
+    <ClCompile Include="Blocks\Dirt.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="OpenGL\Shader.cpp" />
     <ClCompile Include="Time.cpp" />
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Blocks\Block.h" />
+    <ClInclude Include="Blocks\BlocksData.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Chunk.h" />
+    <ClInclude Include="Blocks\Dirt.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="OpenGL\Shader.h" />
     <ClInclude Include="Time.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
@@ -162,6 +171,9 @@
   <ItemGroup>
     <None Include="Resources\Shaders\Fragment\DefaultFragment.frag" />
     <None Include="Resources\Shaders\Vertex\DefaultVertex.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Atlas\Terrain.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

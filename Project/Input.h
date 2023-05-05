@@ -75,7 +75,6 @@ public:
 
     static float GetAxis(Input_Axis axis) {
         if (axis == VERTICAL) {
-            std::cout << xOffSet << "\n";
             return xOffSet;
         }
         return yOffSet;

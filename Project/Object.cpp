@@ -19,14 +19,40 @@ Object::Object() :
     float side = 1.0f;
     float height = side * sqrt(3.0f) / 2.0f;
     glm::vec3 vertices[] = {
-            glm::vec3(-side / 2.0f, -height / 3.0f, 0.0f),
-            glm::vec3(side / 2.0f, -height / 3.0f, 0.0f),
-            glm::vec3(0.0f, 2.0f * height / 3.0f, 0.0f),
-            glm::vec3(side / 2.0f, 2.0f * height / 3.0f, 0.0f)
+            glm::vec3(0,0,0),
+            glm::vec3(0,0,1),
+            glm::vec3(1,0,0),
+            glm::vec3(1,0,1),
+            glm::vec3(0,-1,0),
+            glm::vec3(0,-1,1),
+            glm::vec3(1,-1,0),
+            glm::vec3(1,-1,1),
     };
 
     GLuint indices[] = {
-        0, 1, 2, 2, 3, 1
+        // Front face
+        0, 1, 2,
+        2, 1, 3,
+
+        // Back face
+        4, 6, 5,
+        5, 6, 7,
+
+        // Top face
+        0, 2, 4,
+        4, 2, 6,
+
+        // Bottom face
+        1, 5, 3,
+        3, 5, 7,
+
+        // Left face
+        0, 4, 1,
+        1, 4, 5,
+
+        // Right face
+        2, 3, 6,
+        6, 3, 7
     };
 
     m_indicesCount = sizeof(indices) / sizeof(GLuint);
@@ -100,12 +126,7 @@ void Object::setIBO(GLuint ibo) {
 	m_indicesCount = sizeof(m_ibo) / sizeof(GLuint);
 }
 
-void Object::draw(const glm::mat4& viewMatrix) {
-
-    glUseProgram(m_shaderProgram);
-
-    glBindVertexArray(m_vao);
-
+void Object::renderFromVAO(const glm::mat4& viewMatrix) {
     glm::mat4 modelMatrix = glm::mat4(1.0f);
     modelMatrix = glm::translate(modelMatrix, m_position);
     modelMatrix = glm::rotate(modelMatrix, glm::radians(m_rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -115,10 +136,20 @@ void Object::draw(const glm::mat4& viewMatrix) {
 
     modelMatrix = viewMatrix * modelMatrix;
     glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &modelMatrix[0][0]);
+}
+void Object::draw(const glm::mat4& viewMatrix) {
 
+    glEnable(GL_CULL_FACE);
+
+    glUseProgram(m_shaderProgram);
+
+    glBindVertexArray(m_vao);
+
+    renderFromVAO(viewMatrix);
 
     glDrawElements(GL_TRIANGLES, m_indicesCount, GL_UNSIGNED_INT, 0);
 
     glBindVertexArray(0);
     glUseProgram(0);
+    glDisable(GL_CULL_FACE);
 }

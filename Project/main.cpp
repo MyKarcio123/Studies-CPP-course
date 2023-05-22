@@ -64,6 +64,7 @@ int main(void)
 
         /* Poll for and process events */
         glfwPollEvents();
+        // Funkcja zwrotna do obs³ugi komunikatów debugowych
     }
 
     glfwTerminate();

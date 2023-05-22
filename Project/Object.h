@@ -25,7 +25,8 @@ public:
 	virtual void draw(const glm::mat4& viewMatrix);
 	void start() override {};
 	void update() override {};
-private:
+protected:
+	void renderFromVAO(const glm::mat4& viewMatrix);
 	glm::vec3 m_position;
 	glm::vec3 m_scale;
 	glm::vec3 m_rotation;

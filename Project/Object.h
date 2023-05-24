@@ -6,6 +6,7 @@
 #include <glm/vec3.hpp>
 #include <glm/glm.hpp>
 #include "GameObject.h"
+#include <vector>
 class Object : public GameObject {
 public:
 	Object();
@@ -45,4 +46,7 @@ protected:
 	GLuint m_textureSampler;
 	GLuint viewMatrixLocation;
 
+	std::vector<glm::vec3> vertices;
+	std::vector<int> indicies;
+	std::vector<glm::vec2> uvs;
 };

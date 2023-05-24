@@ -19,11 +19,13 @@ private:
 	glm::vec2 frontSide{-1,-1};
 	glm::vec2 topSide{ -1,-1 };
 	glm::vec2 sideWall{ -1,-1 };
+	glm::vec2 bottomSide{ -1,-1 };
 	std::unordered_map<side, bool> visibleSides;
 protected:
-	Block(int id_, bool isSolid_, bool isOpaque_, float health_, glm::vec2 face_, glm::vec2 top_, glm::vec2 side_);
-	Block(int id_, bool isSolid_, bool isOpaque_, float health_, glm::vec2 face_, glm::vec2 top_);
-	Block(int id_, bool isSolid_, bool isOpaque_, float health_, glm::vec2 face_);
+	Block(int id_, bool isSolid_, bool isOpaque_, float health_, glm::vec2 front, glm::vec2 top_, glm::vec2 side_,glm::vec2 bottom_);
+	Block(int id_, bool isSolid_, bool isOpaque_, float health_, glm::vec2 front_, glm::vec2 top_, glm::vec2 side_);
+	Block(int id_, bool isSolid_, bool isOpaque_, float health_, glm::vec2 front_, glm::vec2 top_);
+	Block(int id_, bool isSolid_, bool isOpaque_, float health_, glm::vec2 front_);
 public:
 	Block();
 	int getId() const;

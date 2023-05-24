@@ -28,108 +28,29 @@ Object::Object() :
         SOIL_FLAG_INVERT_Y // Odwróæ oœ Y (opcjonalne)
     );
 
+    vertices.push_back(glm::vec3(0, 0, 0));
 
-    glm::vec3 vertices[] = {
-        // Front face
-        glm::vec3(0, 0, 0),
-        glm::vec3(1, 0, 0),
-        glm::vec3(1, 1, 0),
-        glm::vec3(0, 1, 0),
+    vertices.push_back(glm::vec3(-1.0f, -1.0f, -1.0f)); // 0
+    vertices.push_back(glm::vec3(1.0f, -1.0f, -1.0f));  // 1
+    vertices.push_back(glm::vec3(1.0f, 1.0f, -1.0f));   // 2
+    vertices.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));  // 3
+    vertices.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  // 4
+    vertices.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   // 5
+    vertices.push_back(glm::vec3(1.0f, 1.0f, 1.0f));    // 6
+    vertices.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));   // 7
 
-        // Back face
-        glm::vec3(1, 0, 1),
-        glm::vec3(0, 0, 1),
-        glm::vec3(0, 1, 1),
-        glm::vec3(1, 1, 1),
+    // Indeksy wierzcho³ków dla tworzenia trójk¹tów
 
-        // Top face
-        glm::vec3(0, 1, 0),
-        glm::vec3(1, 1, 0),
-        glm::vec3(1, 1, 1),
-        glm::vec3(0, 1, 1),
 
-        // Bottom face
-        glm::vec3(0, 0, 0),
-        glm::vec3(0, 0, 1),
-        glm::vec3(1, 0, 1),
-        glm::vec3(1, 0, 0),
-
-        // Left face
-        glm::vec3(0, 0, 0),
-        glm::vec3(0, 1, 0),
-        glm::vec3(0, 1, 1),
-        glm::vec3(0, 0, 1),
-
-        // Right face
-        glm::vec3(1, 0, 0),
-        glm::vec3(1, 1, 0),
-        glm::vec3(1, 1, 1),
-        glm::vec3(1, 0, 1)
-    };
-
-    GLuint indices[] = {
-        // Front face
-        0, 1, 2,
-        2, 3, 0,
-
-        // Back face
-        4, 5, 6,
-        6, 7, 4,
-
-        // Top face
-        8, 9, 10,
-        10, 11, 8,
-
-        // Bottom face
-        12, 13, 14,
-        14, 15, 12,
-
-        // Left face
-        16, 17, 18,
-        18, 19, 16,
-
-        // Right face
-        20, 21, 22,
-        22, 23, 20
-    };
-
-    GLfloat uvs[] = {
-        // Front face
-        0.0f, 0.0f,
-        1.0f, 0.0f,
-        1.0f, 1.0f,
-        0.0f, 1.0f,
-
-        // Back face
-        0.0f, 0.0f,
-        1.0f, 0.0f,
-        1.0f, 1.0f,
-        0.0f, 1.0f,
-
-        // Top face
-        0.0f, 0.0f,
-        1.0f, 0.0f,
-        1.0f, 1.0f,
-        0.0f, 1.0f,
-
-        // Bottom face
-        0.0f, 0.0f,
-        1.0f, 0.0f,
-        1.0f, 1.0f,
-        0.0f, 1.0f,
-
-        // Left face
-        0.0f, 0.0f,
-        1.0f, 0.0f,
-        1.0f, 1.0f,
-        0.0f, 1.0f,
-
-        // Right face
-        0.0f, 0.0f,
-        1.0f, 0.0f,
-        1.0f, 1.0f,
-        0.0f, 1.0f
-    };
+    // Wspó³rzêdne tekstur UV
+    uvs.push_back(glm::vec2(0.0f, 0.0f)); // 0
+    uvs.push_back(glm::vec2(1.0f, 0.0f)); // 1
+    uvs.push_back(glm::vec2(1.0f, 1.0f)); // 2
+    uvs.push_back(glm::vec2(0.0f, 1.0f)); // 3
+    uvs.push_back(glm::vec2(1.0f, 0.0f)); // 4
+    uvs.push_back(glm::vec2(0.0f, 0.0f)); // 5
+    uvs.push_back(glm::vec2(0.0f, 1.0f)); // 6
+    uvs.push_back(glm::vec2(1.0f, 1.0f)); // 7
     // Generowanie ID samplera
     glGenSamplers(1, &m_textureSampler);
 
@@ -146,28 +67,30 @@ Object::Object() :
     glUniform1i(glGetUniformLocation(m_shaderProgram, "textureSampler"), 0);
     glUseProgram(0);
 
-    m_indicesCount = sizeof(indices) / sizeof(GLuint);
+    m_indicesCount = indicies.size();
 
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
 
     glGenBuffers(1, &m_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
     glEnableVertexAttribArray(0);
-
-    glGenBuffers(1, &m_ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     glGenBuffers(1, &m_uvbo);
     glBindBuffer(GL_ARRAY_BUFFER, m_uvbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), uvs.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glGenBuffers(1, &m_ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicies.size() * sizeof(GLuint), indicies.data(), GL_STATIC_DRAW);
+
+    m_indicesCount = indicies.size();
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);

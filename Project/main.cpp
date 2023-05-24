@@ -1,7 +1,5 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include "Object.h"
-#include "Camera.h"
 #include "Game.h"
 #include "Input.h"
 #include "Time.h"
@@ -32,6 +30,14 @@ int main(void)
         glfwTerminate();
         return EXIT_FAILURE;
     }
+
+    // Set up depth buffer
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
+    // Set up viewport
+    glViewport(0, 0, width, height);
+
     Input::SetWindow(window);
     Input::setPosition(width, height);
 
@@ -51,7 +57,7 @@ int main(void)
         lastTime = currentTime;
 
         /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         game.update();
 

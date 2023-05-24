@@ -1,20 +1,24 @@
 #include "Chunk.h"
 #include <vector>
-Chunk::Chunk(glm::ivec2 chunkCoords, const FastNoiseLite& noise, const std::shared_ptr<ChunkObserver>& observer) : Object(), coords{ chunkCoords }, chunkObserver{observer} {
+Chunk::Chunk(glm::ivec2 chunkCoords, const FastNoiseLite& noise, const std::shared_ptr<ChunkObserver>& observer,meshFlag flag) : Object(), coords{ chunkCoords }, chunkObserver{observer} {
     this->setPosition(glm::vec3{ chunkCoords.x * Constants::chunkWidth,0,chunkCoords.y * Constants::chunkWidth });
     for (int x = 0; x < Constants::chunkWidth; ++x) {
         for (int z = 0; z < Constants::chunkWidth; ++z) {
-            float value = noise.GetNoise((float)x,(float)z);
+            float value = noise.GetNoise((float)x + chunkCoords.x*Constants::chunkWidth,(float)z + chunkCoords.y * Constants::chunkWidth);
             int height = (value + 1) / 2 * Constants::chunkHeight;
             for (int y = 0; y < height; ++y) {
+                if (y + 1 == height) {
+                    blocksMap[x][y][z] = std::make_shared<Grass>();
+                    continue;
+                }
                 blocksMap[x][y][z]= std::make_shared<Dirt>();
             }
             for (int y = height; y < Constants::chunkHeight; ++y) {
-                blocksMap[x][y][z] = std::make_shared<Block>();
+                blocksMap[x][y][z] = std::make_shared<Air>();
             }
         }
     }
-    makeMesh();
+    if(flag==meshFlag::MAKEMESH)    makeMesh();
 }
 void Chunk::addBlock(glm::ivec3 pos, sharedBlock block)
 {
@@ -111,14 +115,14 @@ void Chunk::processBlock(const glm::ivec3 pos) {
                 (newPos.z < 0) ? -1 : (newPos.z >= Constants::chunkWidth) ? 1 : 0
             ) + coords;
             if (newPos.y < 0 ) continue;
-            if (offset.x == 0 && offset.y == 0) {
+            if (offset == coords) {
                 if (isBlock(newPos)) continue;
             }
             else{
                 glm::ivec3 blockPosInOtherChunk = glm::ivec3(
-                    (offset.x == -1) ? Constants::chunkWidth-1 : (offset.x == 1) ? 0 : newPos.x,
+                    (offset.x < coords.x) ? Constants::chunkWidth-1 : (offset.x > coords.x) ? 0 : newPos.x,
                     newPos.y,
-                    (offset.y == -1) ? Constants::chunkWidth-1 : (offset.y == 1) ? 0 : newPos.z
+                    (offset.y < coords.y) ? Constants::chunkWidth-1 : (offset.y > coords.y) ? 0 : newPos.z
                 );
                 if (chunkObserver->isBlockAt(offset, blockPosInOtherChunk)) {
                     continue;
@@ -133,6 +137,7 @@ void Chunk::makeMesh()
 {
     indicies.clear();
     vertices.clear();
+    uvs.clear();
     for (int i = 0; i < Constants::chunkWidth; ++i) {
         for (int j = 0; j < Constants::chunkWidth; ++j) {
             for (int k = 0; k < Constants::chunkHeight-1; ++k) {
@@ -175,5 +180,12 @@ void Chunk::updateModel()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
-
+int Chunk::getHeight(const glm::ivec2& blockCoords) {
+    for (int y = Constants::chunkHeight - 1; y >= 0; --y) {
+        if (isBlock(glm::ivec3{ blockCoords.x,y,blockCoords.y })) {
+            return y;
+        }
+    }
+    return 0;
+}
 

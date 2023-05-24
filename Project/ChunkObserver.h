@@ -3,6 +3,6 @@
 class ChunkObserver
 {
 public:
-	virtual bool isBlockAt(glm::ivec2 chunkPos, glm::ivec3 blockPos) = 0;
+	virtual bool isBlockAt(const glm::ivec2& chunkPos,const glm::ivec3& blockPos) = 0;
 };
 

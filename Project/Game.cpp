@@ -6,14 +6,11 @@ Game::Game(GLFWwindow* window_) : window(window_) {
 void Game::start() {
     srand(std::time(0));
     gameObjects.push_back(cameraObject);
-    std::shared_ptr<GameObject> simpleObject = std::make_shared<Object>();
     std::shared_ptr<World> world = std::make_shared<World>();
     gameObjects.push_back(world);
     renderObjects.push_back(world);
-    world->generateChunk(glm::ivec2{ 0,0 });
-    gameObjects.push_back(simpleObject);
-    renderObjects.push_back(std::static_pointer_cast<Object>(simpleObject));
-
+    world->generateSpawn();
+    cameraObject->setPos(glm::ivec3{ glm::vec3(Constants::chunkWidth / 2, world->getHeight(glm::ivec2{ 0,0 },glm::vec2{Constants::chunkWidth / 2,Constants::chunkWidth / 2}) + 3, Constants::chunkWidth / 2) });
     for (auto& gameObject : gameObjects) {
         gameObject->start();
     }

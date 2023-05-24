@@ -9,7 +9,7 @@ Block::Block() :
 	topSide(glm::vec2(0,0)),
 	sideWall(glm::vec2(0,0))
 {}
-Block::Block(int id_, bool isSolid_, bool isOpaque_, float health_, glm::vec2 face_, glm::vec2 top_, glm::vec2 side_) : id(id_), isSolid(isSolid_), isOpaque(isOpaque_), health(health_), frontSide(face_), topSide(top_), sideWall(side_),isDestroyed(false){
+Block::Block(int id_, bool isSolid_, bool isOpaque_, float health_, glm::vec2 face_, glm::vec2 top_, glm::vec2 side_, glm::vec2 bottom_) : id(id_), isSolid(isSolid_), isOpaque(isOpaque_), health(health_), frontSide(face_), topSide(top_), sideWall(side_),bottomSide(bottom_),isDestroyed(false){
 	visibleSides = {
 	{side::FRONT, true},
 	{side::BACK, true},
@@ -19,10 +19,13 @@ Block::Block(int id_, bool isSolid_, bool isOpaque_, float health_, glm::vec2 fa
 	{side::TOP, true}
 	};
 }
-Block::Block(int id_, bool isSolid_, bool isOpaque_, float health_, glm::vec2 face_, glm::vec2 top_) : Block(id_, isSolid_, isOpaque_, health_, face_, top_, top_){
+Block::Block(int id_, bool isSolid_, bool isOpaque_, float health_, glm::vec2 face_, glm::vec2 top_, glm::vec2 side_) : Block(id_, isSolid_, isOpaque_, health_, face_, top_, side_,side_) {
 
 }
-Block::Block(int id_, bool isSolid_, bool isOpaque_, float health_, glm::vec2 face_) : Block(id_, isSolid_, isOpaque_, health_, face_, face_, face_) {
+Block::Block(int id_, bool isSolid_, bool isOpaque_, float health_, glm::vec2 face_, glm::vec2 top_) : Block(id_, isSolid_, isOpaque_, health_, face_, top_, top_,top_){
+
+}
+Block::Block(int id_, bool isSolid_, bool isOpaque_, float health_, glm::vec2 face_) : Block(id_, isSolid_, isOpaque_, health_, face_, face_, face_,face_) {
 
 }
 int Block::getId() const {

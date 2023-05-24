@@ -13,7 +13,7 @@ Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float u
 glm::mat4 Camera::GetViewMatrix() const{
 	return glm::perspective(glm::radians(zoom), (float)800 / (float)600, 0.1f, 100.0f) * glm::lookAt(position, position + front, up);
 }
-
+void Camera::setPos(glm::vec3 pos_) { position = pos_; }
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 {
     float velocity = movementSpeed * deltaTime;

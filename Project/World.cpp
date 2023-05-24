@@ -56,3 +56,15 @@ void World::generateSpawn() {
         it->second->makeMesh();
     }
 }
+void World::playerWentOutOfChunk(const glm::vec3& playerPos) {
+    glm::ivec2 currentPlayerCord{ (int)(playerPos.x / Constants::chunkWidth),(int)(playerPos.z / Constants::chunkWidth) };
+    for (auto it = loadedChunk.begin(); it != loadedChunk.end();) {
+        glm::ivec2 diffrence{ abs(currentPlayerCord.x - (*it).x),abs(currentPlayerCord.y - (*it).y) };
+        if (diffrence.x <= Constants::renderDistance && diffrence.y <= Constants::renderDistance) {
+            continue;
+        }
+        unloadChunk((*it));
+        
+        ++it;
+    }
+}

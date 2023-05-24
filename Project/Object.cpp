@@ -6,7 +6,6 @@
 #include "SOIL2.h"
 
 Object::Object() :
-    m_position(glm::vec3(0.0f)),
     m_scale(glm::vec3(1.0f)),
     m_rotation(glm::vec3(0.0)),
     m_vertexShader(GL_VERTEX_SHADER, "TextureVertex.vert"),

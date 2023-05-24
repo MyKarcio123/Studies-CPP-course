@@ -4,27 +4,27 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
-Camera::Camera(glm::vec3 position_, glm::vec3 up_, float yaw_, float pitch_) : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM), position(position_),worldUp(up_),yaw(yaw_),pitch(pitch_) {
+Camera::Camera(glm::vec3 position_, glm::vec3 up_, float yaw_, float pitch_) : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM), worldUp(up_), yaw(yaw_), pitch(pitch_), GameObject(position_){
 	updateCameraVectors();
 }
-Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw_, float pitch_) : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM),position(glm::vec3(posX, posY, posZ)),worldUp(glm::vec3(upX, upY, upZ)),yaw(yaw_),pitch(pitch_) {
+Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw_, float pitch_) : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM), worldUp(glm::vec3(upX, upY, upZ)), yaw(yaw_), pitch(pitch_), GameObject(glm::vec3{ posX ,posY,posZ }) {
 	updateCameraVectors();
 }
 glm::mat4 Camera::GetViewMatrix() const{
-	return glm::perspective(glm::radians(zoom), (float)800 / (float)600, 0.1f, 100.0f) * glm::lookAt(position, position + front, up);
+	return glm::perspective(glm::radians(zoom), (float)800 / (float)600, 0.1f, 100.0f) * glm::lookAt(m_position, m_position + front, up);
 }
-void Camera::setPos(glm::vec3 pos_) { position = pos_; }
+void Camera::setPos(glm::vec3 pos_) { m_position = pos_; }
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 {
     float velocity = movementSpeed * deltaTime;
     if (direction == FORWARD)
-        position += front * velocity;
+        m_position += front * velocity;
     if (direction == BACKWARD)
-        position -= front * velocity;
+        m_position -= front * velocity;
     if (direction == LEFT)
-        position -= right * velocity;
+        m_position -= right * velocity;
     if (direction == RIGHT)
-        position += right * velocity;
+        m_position += right * velocity;
 }
 void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
 {

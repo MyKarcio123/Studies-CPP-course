@@ -11,6 +11,7 @@
     <ClCompile Include="Blocks\Block.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="Chunk.cpp" />
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OpenGL\Shader.h" />
@@ -27,6 +28,8 @@
     <ClInclude Include="ChunkObserver.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="WorldObserver.h" />
+    <ClInclude Include="PlayerWolrdObserver.h" />
+    <ClInclude Include="Player.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

@@ -23,7 +23,8 @@ private:
 	std::shared_ptr<ChunkObserver> chunkObserver;
 	std::vector<glm::vec3> vertices;
 	std::vector<int> indicies;
-	glm::ivec2 chunkPosition;
+	std::vector<glm::vec2> uvs;
+	glm::vec2 chunkPosition;
 	void updateModel();
 	void makeFace(const glm::ivec3 pos, const glm::ivec3 face);
 public:

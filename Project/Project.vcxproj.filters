@@ -38,6 +38,8 @@
   <ItemGroup>
     <None Include="Resources\Shaders\Vertex\DefaultVertex.vert" />
     <None Include="Resources\Shaders\Fragment\DefaultFragment.frag" />
+    <None Include="Resources\Shaders\Fragment\TextureFragment.frag" />
+    <None Include="Resources\Shaders\Vertex\TextureVertex.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\Atlas\Terrain.png" />

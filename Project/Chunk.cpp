@@ -39,43 +39,58 @@ bool Chunk::isBlock(glm::ivec3 pos)
 }
 void Chunk::makeFace(const glm::ivec3 pos,const glm::ivec3 face) {
     int size = vertices.size();
+    sharedBlock currentBlock = getBlock(pos);
+    glm::vec2 offset = currentBlock->getFront();
     if (face == glm::ivec3{ 0, 0, 1 }) {
-        vertices.push_back(pos + glm::ivec3{ 0, 0, 1 });
-        vertices.push_back(pos + glm::ivec3{ 0, -1, 1 });
-        vertices.push_back(pos + glm::ivec3{ 1, -1, 1 });
+        currentBlock->setSideVisibility(side::RIGHT, true);
         vertices.push_back(pos + glm::ivec3{ 1, 0, 1 });
+        vertices.push_back(pos + glm::ivec3{ 1, -1, 1 });
+        vertices.push_back(pos + glm::ivec3{ 0, -1, 1 });
+        vertices.push_back(pos + glm::ivec3{ 0, 0, 1 });
     }
     else if (face == glm::ivec3{ 0, 0, -1 }) {
+        currentBlock->setSideVisibility(side::LEFT, true);
         vertices.push_back(pos);
-        vertices.push_back(pos + glm::ivec3{ 1, 0, 0 });
-        vertices.push_back(pos + glm::ivec3{ 1, -1, 0 });
         vertices.push_back(pos + glm::ivec3{ 0, -1, 0 });
+        vertices.push_back(pos + glm::ivec3{ 1, -1, 0 });
+        vertices.push_back(pos + glm::ivec3{ 1, 0, 0 });
     }
-    else if (face == glm::ivec3{ 0, 1, 0 }) {
-        vertices.push_back(pos);
-        vertices.push_back(pos + glm::ivec3{ 0, 0, 1 });
+    else if (face == glm::ivec3{ 0, 1, 0 }) { //topface
+        offset = currentBlock->getTop();
+        currentBlock->setSideVisibility(side::TOP, true);
         vertices.push_back(pos + glm::ivec3{ 1, 0, 1 });
+        vertices.push_back(pos + glm::ivec3{ 0, 0, 1 });
+        vertices.push_back(pos);
         vertices.push_back(pos + glm::ivec3{ 1, 0, 0 });
     }
     else if (face == glm::ivec3{ 0, -1, 0 }) {
-        vertices.push_back(pos + glm::ivec3{ 0, -1, 0 });
-        vertices.push_back(pos + glm::ivec3{ 1, -1, 0 });
-        vertices.push_back(pos + glm::ivec3{ 1, -1, 1 });
+        currentBlock->setSideVisibility(side::BOTTOM, true);
         vertices.push_back(pos + glm::ivec3{ 0, -1, 1 });
+        vertices.push_back(pos + glm::ivec3{ 1, -1, 1 });
+        vertices.push_back(pos + glm::ivec3{ 1, -1, 0 });
+        vertices.push_back(pos + glm::ivec3{ 0, -1, 0 });
     }
-    else if (face == glm::ivec3{ 1, 0, 0 }) {
+    else if (face == glm::ivec3{ 1, 0, 0 }) { //front face
+        offset = currentBlock->getFront();
+        currentBlock->setSideVisibility(side::FRONT, true);
         vertices.push_back(pos + glm::ivec3{ 1, 0, 0 });
-        vertices.push_back(pos + glm::ivec3{ 1, 0, 1 });
-        vertices.push_back(pos + glm::ivec3{ 1, -1, 1 });
         vertices.push_back(pos + glm::ivec3{ 1, -1, 0 });
+        vertices.push_back(pos + glm::ivec3{ 1, -1, 1 });
+        vertices.push_back(pos + glm::ivec3{ 1, 0, 1 });
     }
-    else if (face == glm::ivec3{ -1, 0, 0 }) {
-        vertices.push_back(pos);
-        vertices.push_back(pos + glm::ivec3{ 0, -1, 0 });
-        vertices.push_back(pos + glm::ivec3{ 0, -1, 1 });
+    else{
+        currentBlock->setSideVisibility(side::BACK, true);
         vertices.push_back(pos + glm::ivec3{ 0, 0, 1 });
+        vertices.push_back(pos + glm::ivec3{ 0, -1, 1 });
+        vertices.push_back(pos + glm::ivec3{ 0, -1, 0 });
+        vertices.push_back(pos);
     }
-
+    float unit = 1.0f / Constants::atlasSize;
+    offset = offset * (float)Constants::atlasBlockAmount * unit;
+    uvs.push_back(glm::vec2{ offset.x + (((float)Constants::atlasBlockAmount - 1) * unit),1 - offset.y });
+    uvs.push_back(glm::vec2{ offset.x + (((float)Constants::atlasBlockAmount - 1) * unit),1 - offset.y - (((float)Constants::atlasBlockAmount - 1) * unit) });
+    uvs.push_back(glm::vec2{ offset.x,1 - offset.y - (((float)Constants::atlasBlockAmount - 1) * unit) });
+    uvs.push_back(glm::vec2{ offset.x,1 - offset.y});
     indicies.push_back(size);
     indicies.push_back(size + 1);
     indicies.push_back(size + 2);
@@ -142,6 +157,13 @@ void Chunk::updateModel()
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glGenBuffers(1, &m_uvbo);
+    glBindBuffer(GL_ARRAY_BUFFER, m_uvbo);
+    glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), uvs.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glGenBuffers(1, &m_ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);

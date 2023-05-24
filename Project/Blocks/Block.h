@@ -16,9 +16,9 @@ private:
 	bool isOpaque;
 	bool isDestroyed;
 	float health;
-	glm::vec2 frontSide;
-	glm::vec2 topSide;
-	glm::vec2 sideWall;
+	glm::vec2 frontSide{-1,-1};
+	glm::vec2 topSide{ -1,-1 };
+	glm::vec2 sideWall{ -1,-1 };
 	std::unordered_map<side, bool> visibleSides;
 protected:
 	Block(int id_, bool isSolid_, bool isOpaque_, float health_, glm::vec2 face_, glm::vec2 top_, glm::vec2 side_);
@@ -31,7 +31,7 @@ public:
 	bool getIsOpaque() const;
 	bool getIsDestroyed() const;
 	float getHealth() const;
-	glm::vec2 getFace() const;
+	glm::vec2 getFront() const;
 	glm::vec2 getTop() const;
 	glm::vec2 getSide() const;
 	void setSideVisibility(const side& sideType, bool visibility);

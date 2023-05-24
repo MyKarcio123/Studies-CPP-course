@@ -3,57 +3,148 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
+#include "SOIL2.h"
 
 Object::Object() :
     m_position(glm::vec3(0.0f)),
     m_scale(glm::vec3(1.0f)),
     m_rotation(glm::vec3(0.0)),
-    m_vertexShader(GL_VERTEX_SHADER, "DefaultVertex.vert"),
-    m_fragmentShader(GL_FRAGMENT_SHADER, "DefaultFragment.frag"),
+    m_vertexShader(GL_VERTEX_SHADER, "TextureVertex.vert"),
+    m_fragmentShader(GL_FRAGMENT_SHADER, "TextureFragment.frag"),
     m_shaderProgram(glCreateProgram()),
     m_vao(0),
     m_vbo(0),
     m_ibo(0),
-    m_indicesCount(0)
+    m_indicesCount(0),
+    m_textureSampler(0),
+    viewMatrixLocation(-1)
 {
     float side = 1.0f;
     float height = side * sqrt(3.0f) / 2.0f;
+    atlasID = SOIL_load_OGL_texture(
+        "Resources/Atlas/Terrain.png", // Œcie¿ka do pliku tekstury
+        SOIL_LOAD_AUTO, // Automatyczne rozpoznanie formatu tekstury
+        SOIL_CREATE_NEW_ID, // Utwórz nowe ID dla tekstury
+        SOIL_FLAG_INVERT_Y // Odwróæ oœ Y (opcjonalne)
+    );
+
+
     glm::vec3 vertices[] = {
-            glm::vec3(0,0,0),
-            glm::vec3(0,0,1),
-            glm::vec3(1,0,0),
-            glm::vec3(1,0,1),
-            glm::vec3(0,-1,0),
-            glm::vec3(0,-1,1),
-            glm::vec3(1,-1,0),
-            glm::vec3(1,-1,1),
+        // Front face
+        glm::vec3(0, 0, 0),
+        glm::vec3(1, 0, 0),
+        glm::vec3(1, 1, 0),
+        glm::vec3(0, 1, 0),
+
+        // Back face
+        glm::vec3(1, 0, 1),
+        glm::vec3(0, 0, 1),
+        glm::vec3(0, 1, 1),
+        glm::vec3(1, 1, 1),
+
+        // Top face
+        glm::vec3(0, 1, 0),
+        glm::vec3(1, 1, 0),
+        glm::vec3(1, 1, 1),
+        glm::vec3(0, 1, 1),
+
+        // Bottom face
+        glm::vec3(0, 0, 0),
+        glm::vec3(0, 0, 1),
+        glm::vec3(1, 0, 1),
+        glm::vec3(1, 0, 0),
+
+        // Left face
+        glm::vec3(0, 0, 0),
+        glm::vec3(0, 1, 0),
+        glm::vec3(0, 1, 1),
+        glm::vec3(0, 0, 1),
+
+        // Right face
+        glm::vec3(1, 0, 0),
+        glm::vec3(1, 1, 0),
+        glm::vec3(1, 1, 1),
+        glm::vec3(1, 0, 1)
     };
 
     GLuint indices[] = {
         // Front face
         0, 1, 2,
-        2, 1, 3,
+        2, 3, 0,
 
         // Back face
-        4, 6, 5,
-        5, 6, 7,
+        4, 5, 6,
+        6, 7, 4,
 
         // Top face
-        0, 2, 4,
-        4, 2, 6,
+        8, 9, 10,
+        10, 11, 8,
 
         // Bottom face
-        1, 5, 3,
-        3, 5, 7,
+        12, 13, 14,
+        14, 15, 12,
 
         // Left face
-        0, 4, 1,
-        1, 4, 5,
+        16, 17, 18,
+        18, 19, 16,
 
         // Right face
-        2, 3, 6,
-        6, 3, 7
+        20, 21, 22,
+        22, 23, 20
     };
+
+    GLfloat uvs[] = {
+        // Front face
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+
+        // Back face
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+
+        // Top face
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+
+        // Bottom face
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+
+        // Left face
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+
+        // Right face
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f
+    };
+    // Generowanie ID samplera
+    glGenSamplers(1, &m_textureSampler);
+
+    // Ustawianie wartoœci samplera
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glSamplerParameteri(m_textureSampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glSamplerParameteri(m_textureSampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glSamplerParameteri(m_textureSampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glSamplerParameteri(m_textureSampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Przypisanie wartoœci samplera do uniform w programie shaderów
+    glUseProgram(m_shaderProgram);
+    glUniform1i(glGetUniformLocation(m_shaderProgram, "textureSampler"), 0);
+    glUseProgram(0);
 
     m_indicesCount = sizeof(indices) / sizeof(GLuint);
 
@@ -70,6 +161,13 @@ Object::Object() :
     glGenBuffers(1, &m_ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &m_uvbo);
+    glBindBuffer(GL_ARRAY_BUFFER, m_uvbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (void*)0);
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -94,13 +192,12 @@ void Object::setScale(const glm::vec3& scale) {
     m_scale = scale;
 }
 
-
 void Object::setRotation(const glm::vec3& rotation) {
     m_rotation = rotation;
 }
 
 void Object::setVertexShader(const std::string& filename) {
-    m_vertexShader = Shader(GL_VERTEX_SHADER, filename);    
+    m_vertexShader = Shader(GL_VERTEX_SHADER, filename);
     m_vertexShader.compile();
     glAttachShader(m_shaderProgram, m_vertexShader.getID());
     glLinkProgram(m_shaderProgram);
@@ -122,8 +219,8 @@ void Object::setVBO(GLuint vbo) {
 }
 
 void Object::setIBO(GLuint ibo) {
-	m_ibo = ibo;
-	m_indicesCount = sizeof(m_ibo) / sizeof(GLuint);
+    m_ibo = ibo;
+    m_indicesCount = sizeof(ibo);
 }
 
 void Object::renderFromVAO(const glm::mat4& viewMatrix) {
@@ -135,21 +232,25 @@ void Object::renderFromVAO(const glm::mat4& viewMatrix) {
     modelMatrix = glm::scale(modelMatrix, m_scale);
 
     modelMatrix = viewMatrix * modelMatrix;
-    glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &modelMatrix[0][0]);
+    glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 }
-void Object::draw(const glm::mat4& viewMatrix) {
 
+void Object::draw(const glm::mat4& viewMatrix) {
     glEnable(GL_CULL_FACE);
 
+    glFrontFace(GL_CW);
     glUseProgram(m_shaderProgram);
 
     glBindVertexArray(m_vao);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, atlasID);
 
     renderFromVAO(viewMatrix);
 
     glDrawElements(GL_TRIANGLES, m_indicesCount, GL_UNSIGNED_INT, 0);
 
+    glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
-    glUseProgram(0);
     glDisable(GL_CULL_FACE);
+    glUseProgram(0);
 }

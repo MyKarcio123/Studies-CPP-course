@@ -45,7 +45,7 @@ float Block::getHealth() const {
 	return health;
 }
 
-glm::vec2 Block::getFace() const {
+glm::vec2 Block::getFront() const {
 	return frontSide;
 }
 

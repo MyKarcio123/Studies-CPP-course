@@ -38,9 +38,11 @@ protected:
 
 	GLuint m_vao;
 	GLuint m_vbo;
+	GLuint m_uvbo;
 	GLuint m_ibo;
 	GLuint m_indicesCount;
-
+	GLuint atlasID;
+	GLuint m_textureSampler;
 	GLuint viewMatrixLocation;
 
 };

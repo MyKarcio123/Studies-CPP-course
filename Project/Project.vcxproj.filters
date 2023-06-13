@@ -12,6 +12,7 @@
     <ClCompile Include="World.cpp" />
     <ClCompile Include="Chunk.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="GameObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OpenGL\Shader.h" />

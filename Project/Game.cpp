@@ -7,6 +7,7 @@ void Game::start() {
     srand(std::time(0));
     gameObjects.push_back(cameraObject);
     std::shared_ptr<World> world = std::make_shared<World>();
+    cameraObject->setObserver(world);
     gameObjects.push_back(world);
     renderObjects.push_back(world);
     world->generateSpawn();

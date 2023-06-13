@@ -14,17 +14,24 @@ glm::mat4 Camera::GetViewMatrix() const{
 	return glm::perspective(glm::radians(zoom), (float)800 / (float)600, 0.1f, 100.0f) * glm::lookAt(m_position, m_position + front, up);
 }
 void Camera::setPos(glm::vec3 pos_) { m_position = pos_; }
+void Camera::changePosition(glm::vec3 position)
+{
+    GameObject::changePosition(position);
+    observer->playerWentOutOfChunk(m_position);
+}
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 {
     float velocity = movementSpeed * deltaTime;
+    glm::vec3 positionVector{ 0,0,0 };
     if (direction == FORWARD)
-        m_position += front * velocity;
+        positionVector += front * velocity;
     if (direction == BACKWARD)
-        m_position -= front * velocity;
+        positionVector -= front * velocity;
     if (direction == LEFT)
-        m_position -= right * velocity;
+        positionVector -= right * velocity;
     if (direction == RIGHT)
-        m_position += right * velocity;
+        positionVector += right * velocity;
+    changePosition(positionVector);
 }
 void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
 {
@@ -75,4 +82,7 @@ void Camera::update() {
             ProcessKeyboard(static_cast<Camera_Movement>(i), Time::getDeltaTime());
         }
     }
+}
+void Camera::setObserver(std::shared_ptr<PlayerWolrdObserver> observer) {
+    this->observer = observer;
 }

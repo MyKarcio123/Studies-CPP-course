@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include "Constants.h"
-
+#include "PlayerWolrdObserver.h"
 #include <vector>
 #include <GL/glew.h>
 #include "GameObject.h"
@@ -17,7 +17,7 @@ enum Camera_Movement {
 //Default Values
 constexpr float YAW = -90.0f;
 constexpr float PITCH = 0.0f;
-constexpr float SPEED = 2.5f;
+constexpr float SPEED = 10.0f;
 constexpr float SENSITIVITY = 0.1f;
 constexpr float ZOOM = 45.0f;
 
@@ -37,6 +37,8 @@ class Camera : public GameObject
     float movementSpeed;
     float mouseSensitivity;
     float zoom;
+
+    std::shared_ptr<PlayerWolrdObserver> observer;
 public:
     // constructor with vectors
     Camera(glm::vec3 position_ = glm::vec3(Constants::chunkWidth/2, Constants::chunkHeight+2, Constants::chunkWidth / 2), glm::vec3 up_ = glm::vec3(0.0f, 1.0f, 0.0f), float yaw_ = YAW, float pitch_ = PITCH);
@@ -48,8 +50,10 @@ public:
     void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
     void ProcessMouseScroll(float yoffset);
     void setPos(glm::vec3 pos_);
+    void changePosition(glm::vec3 position) override;
     void start() override {};
     void update() override;
+    void setObserver(std::shared_ptr<PlayerWolrdObserver> observer);
 private:
     void updateCameraVectors();
     

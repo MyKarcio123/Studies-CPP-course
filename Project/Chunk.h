@@ -1,6 +1,9 @@
 #pragma once
 #include <unordered_map>
 #include <array>
+#include <mutex>
+#include <thread>
+#include <condition_variable>
 #include "glm/glm.hpp"
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/hash.hpp"
@@ -27,6 +30,8 @@ private:
 	glm::vec2 chunkPosition;
 	void updateModel();
 	void makeFace(const glm::ivec3 pos, const glm::ivec3 face);
+	bool active = true;
+	void makeSingleMesh();
 public:
 	Chunk(glm::ivec2 coords,const FastNoiseLite& noise, const std::shared_ptr<ChunkObserver>& observer, meshFlag flag = meshFlag::MAKEMESH);
 	void makeMesh();
@@ -37,5 +42,7 @@ public:
 	bool isBlock(glm::ivec3 pos);
 	void processBlock(const glm::ivec3 pos);
 	int getHeight(const glm::ivec2& blockCoords);
+	bool isActive();
+	void setActive(bool active);
 };
 

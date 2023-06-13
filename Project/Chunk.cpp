@@ -1,5 +1,6 @@
 #include "Chunk.h"
 #include <vector>
+#include <thread>
 Chunk::Chunk(glm::ivec2 chunkCoords, const FastNoiseLite& noise, const std::shared_ptr<ChunkObserver>& observer,meshFlag flag) : Object(), coords{ chunkCoords }, chunkObserver{observer} {
     this->setPosition(glm::vec3{ chunkCoords.x * Constants::chunkWidth,0,chunkCoords.y * Constants::chunkWidth });
     for (int x = 0; x < Constants::chunkWidth; ++x) {
@@ -133,14 +134,13 @@ void Chunk::processBlock(const glm::ivec3 pos) {
         }
     }
 }
-void Chunk::makeMesh() 
-{
+void Chunk::makeSingleMesh() {
     indicies.clear();
     vertices.clear();
     uvs.clear();
     for (int i = 0; i < Constants::chunkWidth; ++i) {
         for (int j = 0; j < Constants::chunkWidth; ++j) {
-            for (int k = 0; k < Constants::chunkHeight-1; ++k) {
+            for (int k = 0; k < Constants::chunkHeight - 1; ++k) {
                 glm::ivec3 vec{ i,k,j };
                 if (!isBlock(vec)) {
                     continue;
@@ -149,6 +149,11 @@ void Chunk::makeMesh()
             }
         }
     }
+}
+void Chunk::makeMesh() 
+{
+    std::thread meshThread(&Chunk::makeSingleMesh, this);
+    meshThread.join();
     updateModel();
 }
 void Chunk::updateModel()
@@ -187,5 +192,15 @@ int Chunk::getHeight(const glm::ivec2& blockCoords) {
         }
     }
     return 0;
+}
+
+bool Chunk::isActive()
+{
+    return active;
+}
+
+void Chunk::setActive(bool active)
+{
+    this->active = active;
 }
 

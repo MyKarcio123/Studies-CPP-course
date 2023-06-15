@@ -61,8 +61,37 @@ void World::generateSpawn() {
         }
     }
     for (auto it = chunkMap.begin(); it != chunkMap.end(); ++it) {
-        it->second->makeMesh();
+        makeAsyncMesh(it->second);
     }
+}
+void World::update() {
+    if (chunkAvaible) {
+        std::unique_lock<std::mutex> lock(mtx);
+        while (!chunkToUpdateMesh.empty()) {
+            std::shared_ptr<Chunk> currentChunk = chunkToUpdateMesh.front();
+            chunkToUpdateMesh.pop();
+            lock.unlock();
+            currentChunk->updateModel();
+            lock.lock();
+        }
+        chunkAvaible = false;
+    }
+}
+void World::asyncMeshWrapper(std::shared_ptr<Chunk> chunk)
+{
+    //zamiast tworzyæ n w¹tków i jest zabezpieczaæ mutexem jak debil zrób jeden osobny do tego
+    if (!chunkAvaible) {
+        std::unique_lock<std::mutex> lock(mtx);
+        chunk->makeMesh();
+        chunkToUpdateMesh.push(chunk);
+        chunkAvaible = true;
+    }
+    return;
+}
+void World::makeAsyncMesh(std::shared_ptr<Chunk> chunk)
+{
+    std::thread t(&World::asyncMeshWrapper, this, chunk);
+    t.detach();
 }
 void World::playerWentOutOfChunk(const glm::vec3& playerPos) {
 
@@ -109,7 +138,7 @@ void World::playerWentOutOfChunk(const glm::vec3& playerPos) {
     for (glm::ivec2 mesh : meshToRepair) {
         auto it = chunkMap.find(mesh);
         if (it != chunkMap.end()) {
-            it->second->makeMesh();
+            makeAsyncMesh(it->second);
         }
         else {
             continue;

@@ -152,9 +152,24 @@ void Chunk::makeSingleMesh() {
 }
 void Chunk::makeMesh() 
 {
-    std::thread meshThread(&Chunk::makeSingleMesh, this);
-    meshThread.join();
-    updateModel();
+    indicies.clear();
+    vertices.clear();
+    uvs.clear();
+    for (int i = 0; i < Constants::chunkWidth; ++i) {
+        for (int j = 0; j < Constants::chunkWidth; ++j) {
+            for (int k = 0; k < Constants::chunkHeight - 1; ++k) {
+                glm::ivec3 vec{ i,k,j };
+                if (!isBlock(vec)) {
+                    continue;
+                }
+                processBlock(vec);
+            }
+        }
+    }
+}
+glm::ivec2 Chunk::getCoords()
+{
+    return coords;
 }
 void Chunk::updateModel()
 {

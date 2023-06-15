@@ -28,11 +28,12 @@ private:
 	void updateMesh();
 	std::shared_ptr<ChunkObserver> chunkObserver;
 	glm::vec2 chunkPosition;
-	void updateModel();
 	void makeFace(const glm::ivec3 pos, const glm::ivec3 face);
 	bool active = true;
 	void makeSingleMesh();
 public:
+	glm::ivec2 getCoords();
+	void updateModel();
 	Chunk(glm::ivec2 coords,const FastNoiseLite& noise, const std::shared_ptr<ChunkObserver>& observer, meshFlag flag = meshFlag::MAKEMESH);
 	void makeMesh();
 	void addBlock(glm::ivec3 pos, sharedBlock block);

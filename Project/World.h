@@ -9,10 +9,13 @@
 
 #include "Object.h"
 #include "Chunk.h"
+#include <thread>
 
 #include "ChunkObserver.h"
 #include "WorldObserver.h"
 #include "PlayerWolrdObserver.h"
+#include <queue>
+#include <condition_variable>
 
 class World : public Object, public ChunkObserver, public WorldObserver, public PlayerWolrdObserver
 {
@@ -21,9 +24,15 @@ private:
 	std::vector<glm::ivec2> loadedChunk;
 	glm::ivec2 currentChunk{0,0};
 	FastNoiseLite noise;
+	std::mutex mtx;
+	std::queue<std::shared_ptr<Chunk>> chunkToUpdateMesh;
+	bool chunkAvaible = false;
 public:
+	void update() override;
 	World();
 	void generateSpawn();
+	void asyncMeshWrapper(std::shared_ptr<Chunk> chunk);
+	void makeAsyncMesh(std::shared_ptr<Chunk> chunk);
 	void loadChunk(const glm::ivec2& chunkPos) override;
 	void unloadChunk(const glm::ivec2& chunkPos) override;
 	void draw(const glm::mat4& viewMatrix) override;

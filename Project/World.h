@@ -24,13 +24,19 @@ private:
 	std::vector<glm::ivec2> loadedChunk;
 	glm::ivec2 currentChunk{0,0};
 	FastNoiseLite noise;
-	std::mutex mtx;
-	std::queue<std::shared_ptr<Chunk>> chunkToUpdateMesh;
-	bool chunkAvaible = false;
+	std::mutex makeMesh;
+	std::mutex updateModel;
+	std::queue<std::shared_ptr<Chunk>> chunkToMakeMesh;
+	std::queue<std::shared_ptr<Chunk>> chunkToUpdateModel;
+	std::queue<std::shared_ptr<Chunk>> chunkFilledWithData;
+	bool isChunkToMakeMesh = false;
+	bool isChunkToUpdateModel = false;
 public:
+	void start() override;
 	void update() override;
 	World();
 	void generateSpawn();
+	void chunkMenager();
 	void asyncMeshWrapper(std::shared_ptr<Chunk> chunk);
 	void makeAsyncMesh(std::shared_ptr<Chunk> chunk);
 	void loadChunk(const glm::ivec2& chunkPos) override;

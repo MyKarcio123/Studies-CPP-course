@@ -1,24 +1,8 @@
 #include "Chunk.h"
 #include <vector>
 #include <thread>
-Chunk::Chunk(glm::ivec2 chunkCoords, const FastNoiseLite& noise, const std::shared_ptr<ChunkObserver>& observer,meshFlag flag) : Object(), coords{ chunkCoords }, chunkObserver{observer} {
+Chunk::Chunk(glm::ivec2 chunkCoords, const FastNoiseLite& noise_, const std::shared_ptr<ChunkObserver>& observer, meshFlag flag) : Object(), coords{ chunkCoords }, chunkObserver{ observer }, noise{noise_} {
     this->setPosition(glm::vec3{ chunkCoords.x * Constants::chunkWidth,0,chunkCoords.y * Constants::chunkWidth });
-    for (int x = 0; x < Constants::chunkWidth; ++x) {
-        for (int z = 0; z < Constants::chunkWidth; ++z) {
-            float value = noise.GetNoise((float)x + chunkCoords.x*Constants::chunkWidth,(float)z + chunkCoords.y * Constants::chunkWidth);
-            int height = (value + 1) / 2 * Constants::chunkHeight;
-            for (int y = 0; y < height; ++y) {
-                if (y + 1 == height) {
-                    blocksMap[x][y][z] = std::make_shared<Grass>();
-                    continue;
-                }
-                blocksMap[x][y][z]= std::make_shared<Dirt>();
-            }
-            for (int y = height; y < Constants::chunkHeight; ++y) {
-                blocksMap[x][y][z] = std::make_shared<Air>();
-            }
-        }
-    }
     if(flag==meshFlag::MAKEMESH)    makeMesh();
 }
 void Chunk::addBlock(glm::ivec3 pos, sharedBlock block)
@@ -167,6 +151,26 @@ void Chunk::makeMesh()
         }
     }
 }
+void Chunk::fillChunkWithBlocks()
+{
+    for (int x = 0; x < Constants::chunkWidth; ++x) {
+        for (int z = 0; z < Constants::chunkWidth; ++z) {
+            float value = noise.GetNoise((float)x + coords.x * Constants::chunkWidth, (float)z + coords.y * Constants::chunkWidth);
+            int height = (value + 1) / 2 * Constants::chunkHeight;
+            for (int y = 0; y < height; ++y) {
+                if (y + 1 == height) {
+                    blocksMap[x][y][z] = std::make_shared<Grass>();
+                    continue;
+                }
+                blocksMap[x][y][z] = std::make_shared<Dirt>();
+            }
+            for (int y = height; y < Constants::chunkHeight; ++y) {
+                blocksMap[x][y][z] = std::make_shared<Air>();
+            }
+        }
+    }
+    filledWithData = true;
+}
 glm::ivec2 Chunk::getCoords()
 {
     return coords;
@@ -217,5 +221,10 @@ bool Chunk::isActive()
 void Chunk::setActive(bool active)
 {
     this->active = active;
+}
+
+bool Chunk::isFiled()
+{
+    return filledWithData;
 }
 

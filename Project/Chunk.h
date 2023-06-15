@@ -23,7 +23,9 @@ class Chunk : public Object
 {
 private:
 	int counter = 0;
+	bool filledWithData = false;
 	glm::ivec2 coords;
+	const FastNoiseLite& noise;
 	std::array<std::array<std::array<sharedBlock, Constants::chunkWidth>, Constants::chunkHeight>, Constants::chunkWidth> blocksMap;
 	void updateMesh();
 	std::shared_ptr<ChunkObserver> chunkObserver;
@@ -32,9 +34,10 @@ private:
 	bool active = true;
 	void makeSingleMesh();
 public:
+	void fillChunkWithBlocks();
 	glm::ivec2 getCoords();
 	void updateModel();
-	Chunk(glm::ivec2 coords,const FastNoiseLite& noise, const std::shared_ptr<ChunkObserver>& observer, meshFlag flag = meshFlag::MAKEMESH);
+	Chunk(glm::ivec2 coords,const FastNoiseLite& noise, const std::shared_ptr<ChunkObserver>& observer, meshFlag flag = meshFlag::DONTMAKEMESH);
 	void makeMesh();
 	void addBlock(glm::ivec3 pos, sharedBlock block);
 	void addBlock(glm::ivec3 pos, int id);
@@ -45,5 +48,6 @@ public:
 	int getHeight(const glm::ivec2& blockCoords);
 	bool isActive();
 	void setActive(bool active);
+	bool isFiled();
 };
 

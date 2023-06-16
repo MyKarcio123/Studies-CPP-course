@@ -7,9 +7,11 @@ The engine as well as the generator is a preliminary version of alpha 0.1 . It i
 - filling chunks on a separate thread with data,
 - creating a mesh for the chunks and texturing them on a separate thread,
 - generating procedural worlds using perlin noise, making none the same.
+
 Controls:
 - with the mouse you can rotate the camera 360 degrees
 - with the standard keys w,a,s,d you can move the flying player (also you can fly into the chunks, so you can notice that from the inside they are not generated to save time and space)
+
 In addition, in the dependencies folder I included the external libraries I used:
 -FastNoise
 -GLFW

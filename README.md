@@ -13,8 +13,8 @@ Controls:
 - with the standard keys w,a,s,d you can move the flying player (also you can fly into the chunks, so you can notice that from the inside they are not generated to save time and space)
 
 In addition, in the dependencies folder I included the external libraries I used:
--FastNoise
--GLFW
--SOIL
--glew
--glm
+- FastNoise
+- GLFW
+- SOIL
+- glew
+- glm

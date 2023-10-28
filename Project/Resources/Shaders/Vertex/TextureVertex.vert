@@ -1,7 +1,7 @@
-#version 330 core
+#version 140 compatibility
 
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec2 uv;
+attribute vec3 position;
+attribute vec2 uv;
 
 uniform mat4 viewMatrix;
 

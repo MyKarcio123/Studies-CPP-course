@@ -8,10 +8,10 @@ bool World::isBlockAt(const glm::ivec2& chunkPos, const glm::ivec3& blockPos)
     if (it == chunkMap.end()) {
         return false;
     }
-    if (it->second->isActive() == false) {
-        return false;
+    if (it != chunkMap.end() && it->second && it->second->isActive()) {
+        return it->second->isBlock(blockPos);
     }
-    return it->second->isBlock(blockPos);
+    return false;
 }
 World::World():noise{FastNoiseLite(rand())} {
     noise.SetNoiseType(noise.NoiseType_Perlin);

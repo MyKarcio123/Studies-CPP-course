@@ -19,7 +19,7 @@ constexpr float YAW = -90.0f;
 constexpr float PITCH = 0.0f;
 constexpr float SPEED = 10.0f;
 constexpr float SENSITIVITY = 0.1f;
-constexpr float ZOOM = 45.0f;
+constexpr float ZOOM = 80.f;
 
 class Camera : public GameObject
 {

@@ -6,8 +6,8 @@
 int main(void)
 {
     GLFWwindow* window;
-    int width = 640;
-    int height = 480;
+    int width = 1920;
+    int height = 1080;
     /* Initialize the library */
     if (!glfwInit())
         return -1;

@@ -1,6 +1,6 @@
 Repo includes a project for a college course on C++ programming
-My project is a voxel-based, multi-threaded graphics engine written using OpenGL. The engine is integrated with a procedural world generator so that the player can get a glimpse of what everything looks like.
-The engine as well as the generator is a preliminary version of alpha 0.1 . It includes the following:
+My project is a voxel-based, rocedural world generator so that the player can get a glimpse of what everything looks like.
+The project is a preliminary version of alpha 0.1 . It includes the following:
 - loading block graphics from a single texture atlas,
 - three-dimensional camera,
 - generation of only the player-visible walls of models,
